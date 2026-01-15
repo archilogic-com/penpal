@@ -72,7 +72,8 @@ const buildPenpal = async () => {
   const watcher = await build({
     watch: isWatchMode,
     config: true,
-    format: 'iife',
+    format: ['iife', 'esm'],
+    clean: false,
   });
 
   if (watcher) {

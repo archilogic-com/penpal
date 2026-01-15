@@ -261,6 +261,77 @@ console.log(additionResult); // 8
 
 </details>
 
+## Usage with a Node.js Worker
+
+<details>
+    <summary>Expand Details</summary>
+
+### Parent Thread
+
+```javascript
+import { Worker } from 'node:worker_threads';
+import { NodeWorkerMessenger, connect } from 'penpal';
+
+const worker = new Worker('worker.js');
+
+const messenger = new NodeWorkerMessenger({
+  worker,
+});
+
+const connection = connect({
+  messenger,
+  // Methods the parent is exposing to the worker.
+  methods: {
+    add(num1, num2) {
+      return num1 + num2;
+    },
+  },
+});
+
+const remote = await connection.promise;
+// Calling a remote method will always return a promise.
+const multiplicationResult = await remote.multiply(2, 6);
+console.log(multiplicationResult); // 12
+const divisionResult = await remote.divide(12, 4);
+console.log(divisionResult); // 3
+```
+
+### Worker Thread
+
+```javascript
+import { parentPort } from 'node:worker_threads';
+import { PortMessenger, connect } from 'penpal';
+
+const messenger = new PortMessenger({
+  port: parentPort,
+});
+
+const connection = connect({
+  messenger,
+  // Methods the worker is exposing to the parent.
+  methods: {
+    multiply(num1, num2) {
+      return num1 * num2;
+    },
+    divide(num1, num2) {
+      // Return a promise if asynchronous processing is needed.
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(num1 / num2);
+        }, 1000);
+      });
+    },
+  },
+});
+
+const remote = await connection.promise;
+// Calling a remote method will always return a promise.
+const additionResult = await remote.add(2, 6);
+console.log(additionResult); // 8
+```
+
+</details>
+
 ## Usage with a Shared Worker
 
 <details>
@@ -838,6 +909,18 @@ This messenger supports communication with a [Worker](https://developer.mozilla.
 `worker: Worker | DedicatedWorkerGlobalScope`
 
 A reference to the worker. When connecting from a window, you would specify the instantiated worker object. When connecting from the worker, you would specify `self`.
+
+---
+
+### `NodeWorkerMessenger`
+
+This messenger supports communication with a [Node.js Worker](https://nodejs.org/api/worker_threads.html#class-worker). See [Usage with a Node.js Worker](#usage-with-a-nodejs-worker) for an example.
+
+#### Constructor Options
+
+`worker: Worker`
+
+A reference to the Node.js worker.
 
 ---
 
