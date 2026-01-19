@@ -1,15 +1,18 @@
 {
-  "name": "penpal",
+  "name": "@archilogic/penpal",
   "version": "7.0.4",
   "description": "Penpal simplifies communication with iframes, workers, and windows by using promise-based methods on top of postMessage.",
   "author": "Aaron Hardy <aaron@aaronhardy.com>",
   "license": "MIT",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "bugs": {
-    "url": "https://github.com/Aaronius/penpal/issues"
+    "url": "https://github.com/archilogic/penpal/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Aaronius/penpal.git"
+    "url": "git+https://github.com/archilogic/penpal.git"
   },
   "keywords": [
     "postMessage",
@@ -21,6 +24,8 @@
     "workers",
     "web-worker",
     "web-workers",
+    "node-worker",
+    "node-workers",
     "shared-worker",
     "shared-workers",
     "service-worker",
@@ -48,9 +53,12 @@
     "build:analysis": "node scripts/filesize.js dist/penpal.min.js",
     "lint": "eslint --cache --fix",
     "format": "prettier --write \"**/*.{json,ts,js,cjs,md,html}\"",
-    "test": "node scripts/test.js",
-    "test:watch": "npm run test -- --watch",
-    "prepublishOnly": "npm-run-all format lint test build",
+    "changeset": "changeset",
+    "test": "npm-run-all test:browser test:node",
+    "test:browser": "node scripts/test.js",
+    "test:node": "node --test test/nodeWorker.spec.js",
+    "test:watch": "npm run test:browser -- --watch",
+    "prepublishOnly": "npm-run-all format lint test:node build",
     "prepare": "husky install"
   },
   "lint-staged": {
@@ -65,6 +73,7 @@
     "dist"
   ],
   "devDependencies": {
+    "@changesets/cli": "^2.29.8",
     "@chiragrupani/karma-chromium-edge-launcher": "^2.4.1",
     "@eslint/js": "^9.17.0",
     "@metahub/karma-rollup-preprocessor": "^6.0.0",

@@ -1,0 +1,44 @@
+name: Branch
+on: pull_request
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install Dependencies
+        run: npm install
+        
+      - name: Get commit message and branch name
+        run: |
+          commit_title=$(gh api repos/${{ github.repository }}/commits/${{ github.event.pull_request.head.sha }} --jq '.commit.message' | head -n 1)
+          branch_name=${GITHUB_HEAD_REF#refs/heads/}
+          echo "Commit Title: $commit_title"
+          echo "Branch Name: $branch_name"
+          echo "COMMIT_TITLE=$commit_title" >> $GITHUB_ENV
+          echo "BRANCH_NAME=$branch_name" >> $GITHUB_ENV
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Test and Build
+        run: |
+          npm run build
+          npm run test:node
+          
+      - name: Publish snapshot if commit title contains [snapshot]
+        if: contains(env.COMMIT_TITLE, '[snapshot]')
+        run: |
+          npx changeset version --snapshot
+          npx changeset publish --no-git-tag --snapshot --tag="$BRANCH_NAME"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.CI_NPM_TOKEN }}
+                
