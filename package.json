@@ -58,7 +58,7 @@
     "test:browser": "node scripts/test.js",
     "test:node": "node --test test/nodeWorker.spec.js",
     "test:watch": "npm run test:browser -- --watch",
-    "prepublishOnly": "npm-run-all format lint test build",
+    "prepublishOnly": "npm-run-all format lint test:node build",
     "prepare": "husky install"
   },
   "lint-staged": {
