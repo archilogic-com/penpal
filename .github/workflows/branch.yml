@@ -32,7 +32,7 @@ jobs:
       - name: Test and Build
         run: |
           npm run build
-          npm run test
+          npm run test:node
           
       - name: Publish snapshot if commit title contains [snapshot]
         if: contains(env.COMMIT_TITLE, '[snapshot]')
