@@ -6,12 +6,6 @@ import Messenger, {
 import PenpalError from '../PenpalError.js';
 import { TransferListItem, Worker } from 'node:worker_threads';
 
-// This is needed to resolve some conflict errors. There may be a better way.
-type MessageTarget = Pick<
-  Worker,
-  'postMessage' | 'addListener' | 'removeListener'
->;
-
 type Options = {
   /**
    * The Node.js worker receiving/sending communication from/to the parent thread.
@@ -23,7 +17,7 @@ type Options = {
  * Handles the details of communicating with a child Node.js worker.
  */
 class NodeWorkerMessenger implements Messenger {
-  readonly #worker: MessageTarget;
+  readonly #worker: Worker;
   #validateReceivedMessage?: (data: unknown) => data is Message;
   readonly #messageCallbacks = new Set<MessageHandler>();
 
