@@ -54,6 +54,8 @@
     "lint": "eslint --cache --fix",
     "format": "prettier --write \"**/*.{json,ts,js,cjs,md,html}\"",
     "changeset": "changeset",
+    "version": "changeset version",
+    "publish": "changeset publish",
     "test": "npm-run-all test:browser test:node",
     "test:browser": "node scripts/test.js",
     "test:node": "node --test test/nodeWorker.spec.js",
