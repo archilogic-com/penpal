@@ -54,6 +54,7 @@
     "lint": "eslint --cache --fix",
     "format": "prettier --write \"**/*.{json,ts,js,cjs,md,html}\"",
     "changeset": "changeset",
+    "changeset:auto": "npx changeset-conventional-commits",
     "version": "changeset version",
     "publish": "changeset publish",
     "test": "npm-run-all test:browser test:node",
